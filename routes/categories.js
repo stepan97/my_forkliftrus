@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const validateObjectId = require('../middleware/validateObjectId');
+const auth = require("../middleware/auth");
+const adminAuth = require('../middleware/admin');
 const { Category, validateCategory } = require('../models/Category');
 const { Product } = require('../models/Product');
 
@@ -20,7 +22,7 @@ router.get('/:id', validateObjectId, async (req, res) => {
   return res.send(category);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', [ auth, adminAuth ], async (req, res) => {
   const { error } = validateCategory(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -36,7 +38,7 @@ router.post('/', async (req, res) => {
   return res.send(category);
 });
 
-router.put('/:id', validateObjectId, async (req, res) => {
+router.put('/:id', [ auth, adminAuth ], validateObjectId, async (req, res) => {
   const values = req.body;
   const { error } = validateCategory(values);
   if (error) return res.status(400).send(error.details[0].message);
@@ -50,7 +52,7 @@ router.put('/:id', validateObjectId, async (req, res) => {
   return res.send(category);
 });
 
-router.delete('/:id', validateObjectId, async (req, res) => {
+router.delete('/:id', [ auth, adminAuth ], validateObjectId, async (req, res) => {
   const category = await Category.findOneAndRemove({ _id: req.params.id });
   if (!category) return res.status(400).send('Category with given id was not found.');
 

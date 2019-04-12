@@ -3,6 +3,7 @@ const router = require('express').Router();
 const fs = require('fs');
 const validateObjectId = require('../middleware/validateObjectId');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin');
 const { Catalogue, validateCatalogue } = require('../models/Cataluge');
 const { Product } = require('../models/Product');
 const {
@@ -27,7 +28,7 @@ router.get('/:id', validateObjectId, async (req, res) => {
   return res.send(catalogue);
 });
 
-router.post('/', auth, async (req, res) => {
+router.post('/', [auth, adminAuth], async (req, res) => {
   const values = req.body;
   const { error } = validateCatalogue(values);
   if (error) return res.status(400).send(error.details[0].message);
@@ -44,7 +45,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // upload image for a catalogue
-router.put('/image/:id', async (req, res, next) => {
+router.put('/image/:id', [auth, adminAuth], async (req, res, next) => {
   // uploaded image
   const imageFile = req.files.image;
   // console.log(req.files);
@@ -75,10 +76,14 @@ router.put('/image/:id', async (req, res, next) => {
   });
 });
 
-router.put('/:id', auth, validateObjectId, async (req, res) => {
+router.put('/:id', [auth, adminAuth], validateObjectId, async (req, res) => {
   const values = req.body;
   const { error } = validateCatalogue(values);
   if (error) return res.status(400).send(error.details[0].message);
+
+  // 1 - CatalogueProduct -> CatalogueCagetoryProduct
+  // 2 - CatalogueProduct -> CatalogueCategorySubcategoryProduct
+  // 3 - CatalogueCategoryProduct - CatalogueCategorySubcategoryProduct
 
   const catalogue = await Catalogue.findOneAndUpdate({ _id: req.params.id }, {
     title: values.title,
@@ -90,22 +95,34 @@ router.put('/:id', auth, validateObjectId, async (req, res) => {
   return res.send(catalogue);
 });
 
-router.delete('/:id', validateObjectId, auth, async (req, res) => {
+router.delete('/:id', [auth, adminAuth], validateObjectId, async (req, res) => {
   const catalogue = await Catalogue.findOneAndRemove({ _id: req.params.id }, { new: true });
   if (!catalogue) return res.status(400).send('Catalogue with given id was not found.');
 
-  const { categories } = catalogue;
-  const subcategoryIds = [];
+  const productIds = [];
 
-  for (let i = 0; i < categories.length; i += 1) {
-    for (let j = 0; j < categories[i].subcategories.length; j += 1) {
-      subcategoryIds.push(categories[i].subcategories[j]);
+  const {categories} = catalogue;
+
+  // if catalogue has categories, browse them
+  if (categories && categories.length > 0) {
+    for (let i = 0; i < categories.length; i += 1) {
+      // if a category has subcategories, then products reference subcategories
+      if (categories[i].subcategories) {
+        for (let j = 0; j < categories[i].subcategories.length; j += 1) {
+          productIds.push(categories[i].subcategories[j]._id);
+        }
+      } else {
+        // otherwise products reference a category
+        productIds.push(categories[i]._id);
+      }
     }
+  } else {
+    productIds.push(catalogue._id);
   }
 
-  await Product.deleteMany({ _id: { $in: { subcategoryIds } } });
+  await Product.deleteMany({ _id: { $in: { productIds } } });
 
-  return res.send(catalogue);
+  return res.send(`DELETED: ${catalogue}`);
 });
 
 // deletes a file if it's not the default image or icon

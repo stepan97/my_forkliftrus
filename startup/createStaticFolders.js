@@ -24,6 +24,10 @@ module.exports = async function createStaticDirectories() {
   err = await folderCreator(`.${constants.SUBCATEGORY_IMAGES_URL}`);
   if (err) errors.push(err);
 
+  // products folder for images
+  err = await folderCreator(`.${constants.PRODUCT_IMAGES_URL}`);
+  if (err) errors.push(err);
+
   if (errors.length > 0) {
     // TODO: log the error, stop the server
 

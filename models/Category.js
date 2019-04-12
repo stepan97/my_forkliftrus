@@ -7,6 +7,7 @@ const subcategorySchema = new mongoose.Schema({
 
 const categorySchema = new mongoose.Schema({
   title: String,
+  image: String,
   subcategories: {
     type: [subcategorySchema],
   },
@@ -18,6 +19,7 @@ function validateCategory(category) {
   };
   const schema = {
     title: Joi.string().required(),
+    image: Joi.string().required(),
     subcategories: Joi.array().items(subSchema),
   };
 

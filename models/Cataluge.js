@@ -13,6 +13,7 @@ const catalogueSchema = new mongoose.Schema({
 function validateCatalogue(catalogue) {
   const schema = {
     title: Joi.string().required(),
+    image: Joi.string().required(),
     categories: Joi.array().items(Joi.objectId()),
   };
 

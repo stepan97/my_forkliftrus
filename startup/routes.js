@@ -4,6 +4,9 @@ const error = require('../middleware/error');
 const catalogues = require('../routes/catalogues');
 const categories = require('../routes/categories');
 const products = require('../routes/products');
+const admins = require('../routes/admins');
+const auth = require('../middleware/auth');
+const superAdminAuth = require('../middleware/superAdmin');
 
 module.exports = function initRoutes(app) {
   app.use(express.json());
@@ -20,6 +23,7 @@ module.exports = function initRoutes(app) {
   app.use('/catalogues', catalogues);
   app.use('/categories', categories);
   app.use('/products', products);
+  app.use('/admins', [ auth, superAdminAuth ], admins);
 
   app.use('*', (req, res) => {
     res.send('not found.');
