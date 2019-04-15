@@ -14,6 +14,10 @@ const search = require('../routes/search');
 const shippingAndPayment = require('../routes/shippingAndPayment');
 const authRoutes = require('../routes/auth');
 const admins = require('../routes/admins');
+// socket
+const orderCall = require('../routes/orderCall');
+const productOrders = require('../routes/productOrders');
+const feedback = require('../routes/feedback');
 
 module.exports = function initRoutes(app) {
   app.use(express.json());
@@ -35,6 +39,7 @@ module.exports = function initRoutes(app) {
   }));
 
   // routes
+  app.get('/', (req, res) => {res.send('ok')});
   app.use('/search', search);
   app.use('/catalogues', catalogues);
   app.use('/categories', categories);
@@ -44,6 +49,10 @@ module.exports = function initRoutes(app) {
   app.use('/homepageCarousel', homepageCarousel);
   app.use('/shippingAndPayment', shippingAndPayment);
   app.use('/admins', [auth, superAdminAuth], admins);
+
+  app.use('/orderCall', orderCall);
+  app.use('/productOrders', productOrders);
+  app.use('/feedback', feedback);
 
   // not found (404)
   app.use('*', (req, res) => {

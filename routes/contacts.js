@@ -4,7 +4,8 @@ const { Contact, validateContacts } = require('../models/Contact');
 // TODO: test
 
 router.get('/', async (req, res) => {
-  const contacts = await Contact.findOne();
+  const contacts = await Contact.findOne()
+    .populate('partners');
   res.send(contacts);
 });
 
