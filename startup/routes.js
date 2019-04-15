@@ -1,12 +1,19 @@
 const express = require('express');
+// middlewares
 const fileUpload = require('express-fileupload');
+const auth = require('../middleware/auth');
+const superAdminAuth = require('../middleware/superAdmin');
 const error = require('../middleware/error');
+// routes
 const catalogues = require('../routes/catalogues');
 const categories = require('../routes/categories');
 const products = require('../routes/products');
+const contacts = require('../routes/contacts');
+const homepageCarousel = require('../routes/homepageCarousel');
+const search = require('../routes/search');
+const shippingAndPayment = require('../routes/shippingAndPayment');
+const authRoutes = require('../routes/auth');
 const admins = require('../routes/admins');
-const auth = require('../middleware/auth');
-const superAdminAuth = require('../middleware/superAdmin');
 
 module.exports = function initRoutes(app) {
   app.use(express.json());
@@ -28,9 +35,14 @@ module.exports = function initRoutes(app) {
   }));
 
   // routes
+  app.use('/search', search);
   app.use('/catalogues', catalogues);
   app.use('/categories', categories);
   app.use('/products', products);
+  app.use('/auth', authRoutes);
+  app.use('/contacts', contacts);
+  app.use('/homepageCarousel', homepageCarousel);
+  app.use('/shippingAndPayment', shippingAndPayment);
   app.use('/admins', [auth, superAdminAuth], admins);
 
   // not found (404)
