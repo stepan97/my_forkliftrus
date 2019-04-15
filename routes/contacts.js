@@ -1,43 +1,40 @@
 const router = require('express').Router();
-const Contact = require('../models/Contact');
+const { Contact, validateContacts } = require('../models/Contact');
 
-// TODO: test all routes here
+// TODO: test
 
 router.get('/', async (req, res) => {
   const contacts = await Contact.findOne();
   res.send(contacts);
 });
 
-router.get('/partners', async (req, res) => {
-  const partners = await Contact.findOne()
-    .select('partners');
+router.put('/', async (req, res) => {
+  let contacts = await Contact.findOne();
+  if (!contacts) {
+    contacts = new Contact({
+      email: '',
+      phoneNumbers: [],
+      partners: [],
+      address: '',
+      workingHours: '',
+      mapCoordinates: { latitude: '', longitude: '' },
+    });
+  }
 
-  res.send(partners);
-});
+  const values = req.body;
+  const { error } = validateContacts(values);
+  if (error) return res.status(400).send(error.details[0].message);
 
-router.get('/phoneNumbers', async (req, res) => {
-  const phoneNumbers = await Contact.findOne()
-    .select('phoneNumbers');
+  contacts.email = values.email;
+  contacts.phoneNumbers = values.phoneNumbers;
+  contacts.partners = values.partners;
+  contacts.address = values.address;
+  contacts.workingHours = values.workingHours;
+  contacts.mapCoordinates = values.mapCoordinates;
 
-  res.send(phoneNumbers);
-});
+  await contacts.save();
 
-router.get('/email', async (req, res) => {
-  const email = await Contact.findOne()
-    .select('email');
-  res.send(email);
-});
-
-router.get('/address', async (req, res) => {
-  const address = await Contact.findOne()
-    .select('address');
-  res.send(address);
-});
-
-router.get('/workingHours', async (req, res) => {
-  const workingHours = await Contact.findOne()
-    .select('workingHours');
-  res.send(workingHours);
+  return res.send(contacts);
 });
 
 module.exports = router;

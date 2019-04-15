@@ -60,7 +60,7 @@ router.put('/:id', [auth, admin], validateObjectId, async (req, res) => {
 });
 
 router.delete('/:id', [auth, admin], validateObjectId, async (req, res) => {
-  const carousel = await HomepageCarousel.findOneAndDelete({ _id: req.params.id });
+  const carousel = await HomepageCarousel.findByIdAndRemove(req.params.id);
   if (!carousel) return res.status(400).send('Homepage carousel with given id was not found.');
 
   return res.send(carousel);

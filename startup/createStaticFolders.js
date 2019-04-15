@@ -36,6 +36,10 @@ module.exports = async function createStaticDirectories() {
   err = await folderCreator(`.${constants.SHIPPING_AND_PAYMENT_URL}`);
   if (err) errors.push(err);
 
+  // for partners
+  err = await folderCreator(`.${constants.PARTNERS_URL}`);
+  if (err) errors.push(err);
+
   if (errors.length > 0) {
     // TODO: log the error, stop the server
 

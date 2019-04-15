@@ -4,6 +4,7 @@ const SUBCATEGORY_IMAGES_URL = '/static/images/subcategory';
 const PRODUCT_IMAGES_URL = '/static/images/products';
 const HOMEPAGE_CAROUSEL_URL = '/static/images/homepageCarousel';
 const SHIPPING_AND_PAYMENT_URL = '/static/images/shippingAndPayment';
+const PARTNERS_URL = '/static/images/partners';
 
 module.exports = {
   CATALOGUE_IMAGES_URL,
@@ -12,6 +13,7 @@ module.exports = {
   PRODUCT_IMAGES_URL,
   HOMEPAGE_CAROUSEL_URL,
   SHIPPING_AND_PAYMENT_URL,
+  PARTNERS_URL,
   DEFAULT_CATALOGUE_IMAGE: `${CATALOGUE_IMAGES_URL}/catalogue_default.jpg`,
   DEFAULT_CATEGORY_IMAGE: `${CATEGORY_IMAGES_URL}/category_default.jpg`,
   DEFAULT_SUBCATEGORY_IMAGE: `${SUBCATEGORY_IMAGES_URL}/subcategory_default.jpg`,

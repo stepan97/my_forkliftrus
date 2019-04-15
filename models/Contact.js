@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
-
-const carouselSchema = new mongoose.Schema({
-  title: String,
-  image: String,
-});
+const Joi = require('joi');
 
 const contactsSchema = new mongoose.Schema({
   email: String,
@@ -12,11 +8,35 @@ const contactsSchema = new mongoose.Schema({
     default: [],
   },
   partners: {
-    type: [carouselSchema],
-    required: false,
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Partner',
+    default: [],
   },
   address: String,
   workingHours: String,
+  mapCoordinates: {
+    latitude: String,
+    longitude: String,
+  },
 });
 
-module.exports = mongoose.model('Contact', contactsSchema);
+function validateContacts(values) {
+  const coordsSchema = {
+    latitude: Joi.string().required(),
+    longitude: Joi.string().required(),
+  };
+
+  const schema = {
+    email: Joi.string().email().default(''),
+    phoneNumbers: Joi.array().items(Joi.string()).default([]),
+    // partners: Joi.array().items(Joi.objectId()).default([]),
+    address: Joi.string().default(''),
+    workingHours: Joi.string().default(''),
+    mapCoordinates: Joi.object(coordsSchema).default({ latitude: '0', longitude: '0' }),
+  };
+
+  return Joi.validate(values, schema);
+}
+
+module.exports.Contact = mongoose.model('Contact', contactsSchema);
+module.exports.validateContacts = validateContacts;
