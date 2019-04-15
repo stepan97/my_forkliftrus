@@ -28,6 +28,14 @@ module.exports = async function createStaticDirectories() {
   err = await folderCreator(`.${constants.PRODUCT_IMAGES_URL}`);
   if (err) errors.push(err);
 
+  // for homepage carousel images
+  err = await folderCreator(`.${constants.HOMEPAGE_CAROUSEL_URL}`);
+  if (err) errors.push(err);
+
+  // for shipping and payment images
+  err = await folderCreator(`.${constants.SHIPPING_AND_PAYMENT_URL}`);
+  if (err) errors.push(err);
+
   if (errors.length > 0) {
     // TODO: log the error, stop the server
 

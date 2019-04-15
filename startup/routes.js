@@ -18,16 +18,26 @@ module.exports = function initRoutes(app) {
     next();
   });
 
+  // static folder
   app.use('/static', express.static('static'));
-  app.use(fileUpload());
+
+  // file upload supprort
+  app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: './tmp/',
+  }));
+
+  // routes
   app.use('/catalogues', catalogues);
   app.use('/categories', categories);
   app.use('/products', products);
-  app.use('/admins', [ auth, superAdminAuth ], admins);
+  app.use('/admins', [auth, superAdminAuth], admins);
 
+  // not found (404)
   app.use('*', (req, res) => {
     res.send('not found.');
   });
 
+  // error middleware
   app.use(error);
 };

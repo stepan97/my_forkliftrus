@@ -9,6 +9,11 @@ const productSchema = new mongoose.Schema({
     required: true,
     default: [DEFAULT_PRODUCT_IMAGE],
   }],
+  mainImage: {
+    type: String,
+    required: true,
+    default: DEFAULT_PRODUCT_IMAGE,
+  },
   articul: Number,
   price: Number,
   numberInStock: Number,
@@ -27,7 +32,7 @@ const productSchema = new mongoose.Schema({
 function validateProductBody(product) {
   const characteristicSchema = {
     key: Joi.string(),
-    value: Joi.string()
+    value: Joi.string(),
   };
 
   const schema = {

@@ -5,7 +5,7 @@ const morgan = require('morgan');
 app.use(morgan('tiny'));
 
 require('./startup/createStaticFolders')();
-require('./startup/db')();
+// require('./startup/db')();
 require('./startup/routes')(app);
 require('./startup/joiObjectId')();
 
