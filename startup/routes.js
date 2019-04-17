@@ -15,7 +15,7 @@ const shippingAndPayment = require('../routes/shippingAndPayment');
 const authRoutes = require('../routes/auth');
 const admins = require('../routes/admins');
 // socket
-const orderCall = require('../routes/orderCall');
+const callOrders = require('../routes/callOrders');
 const productOrders = require('../routes/productOrders');
 const feedback = require('../routes/feedback');
 
@@ -50,7 +50,7 @@ module.exports = function initRoutes(app) {
   app.use('/shippingAndPayment', shippingAndPayment);
   app.use('/admins', [auth, superAdminAuth], admins);
 
-  app.use('/orderCall', orderCall);
+  app.use('/callOrders', callOrders);
   app.use('/productOrders', productOrders);
   app.use('/feedback', feedback);
 

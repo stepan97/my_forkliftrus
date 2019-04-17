@@ -1,68 +1,48 @@
 const socketIO = require('socket.io');
+const CallOrdersController = require('../controllers/callsController');
 
 let io = null;
 
-const EVENTS_ENUM = {
-  CALL_ORDER: 'call_order',
-  PRODUCT_ORDER: 'product_order',
-  FEEDBACK: 'feedback',
-  CALL_VIEWED: 'call_viewed',
-  PRODUCT_ORDER_VIEWED: 'product_order_viewed',
-  FEEDBACK_VIEWED: 'feedback_viewed',
-};
+const GET_CALLS_LIST = 'get_calls_list';
+const CALLS_LIST = 'calls_list';
+const NEW_CALL_ORDER = 'new_call_order';
+const SERVING_CALL_ORDER = 'serving_call_order';
 
 function initSocket(server) {
+  if (!server) throw new Error("No servier provided for initializing Socket.io.");
+  if (io) return;
+
   io = socketIO(server);
 
-  io.on('connection', (socket) => {
-    io.emit('kayfo', 'new connection');
+  io.on('connection', async (socket) => {
+
+    const connectionID = socket.id;
+
+    // inform other admins that one admin took an order to serve
+    socket.on(SERVING_CALL_ORDER, async (callOrderId) => {
+      socket.broadcast.emit(SERVING_CALL_ORDER, callOrderId);
+      await CallOrdersController.delete(callOrderId)
+    });
+
+    socket.on(GET_CALLS_LIST, async (socket) => {
+      const orders = await CallOrdersController.getAll();
+      io.to(`${connectionID}`).emit(CALLS_LIST, orders);
+    });
+
+    // socket.emit(CALLS_LIST, await CallOrdersController.getAll());
   });
 }
 
-function checkErrors() {
-  if (!io) return 'Socket io is not initialized!';
-  // if (!data) return { errorMessage: 'No call provided!', code: 'NoData' };
-  return null;
+function newCallOrder(call) {
+  if (!call) return false;
+  // save call to db with rest api
+  io.emit(NEW_CALL_ORDER, call);
+  return true;
 }
 
-// emit event to admins
-const socketController = {
-  initSocket,
-  pushCallOrder(call) {
-    const err = checkErrors();
-    if (err) return err;
+module.exports.initSocket = initSocket;
+module.exports.newCallOrder = newCallOrder;
 
-    io.emit(EVENTS_ENUM.CALL_ORDER, call);
-    return null;
-  },
-
-  callHasBeenViewed(id) {
-    io.emit(EVENTS_ENUM.CALL_VIEWED, id);
-  },
-
-  pushProductOrder(order) {
-    const err = checkErrors();
-    if (err) return err;
-
-    io.emit(EVENTS_ENUM.PRODUCT_ORDER, order);
-    return null;
-  },
-
-  productOrderHasBeenViewed(id) {
-    io.emit(EVENTS_ENUM.PRODUCT_ORDER_VIEWED, id);
-  },
-
-  pushFeedback(feedback) {
-    const err = checkErrors();
-    if (err) return err;
-
-    io.emit(EVENTS_ENUM.FEEDBACK, feedback);
-    return null;
-  },
-
-  feedbackHasBeenViewed(id) {
-    io.emit(EVENTS_ENUM.FEEDBACK_VIEWED, id);
-  },
-};
-
-module.exports = socketController;
+module.exports.getSocketIo = function getSocketIo() {
+  return io ? io : null;
+}

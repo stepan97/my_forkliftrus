@@ -5,7 +5,9 @@ module.exports = function validateObjectId(req, res, next) {
     return next();
   }
 
-  const err = new Error('Invalid id.');
-  err.status = 400;
-  return next(err);
+  // const err = new Error('Invalid id.');
+  // err.status = 400;
+  // return next(err);
+
+  return res.status(400).send('Invalid id.');
 };
