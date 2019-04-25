@@ -8,11 +8,6 @@ app.use(morgan('tiny'));
 
 require('./startup/createStaticFolders')();
 require('./startup/db')();
-<<<<<<< HEAD
-require('./startup/socket.js').initSocket(server);
-=======
-// require('./startup/socket.js').initSocket(server);
->>>>>>> 2985e73dc824c152445ee3fcb8f91caefe560232
 require('./startup/routes')(app);
 require('./startup/joiObjectId')();
 // add socket connection for 'feedback's and 'order call's
