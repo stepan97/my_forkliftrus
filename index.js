@@ -7,7 +7,7 @@ const server = require('http').Server(app);
 app.use(morgan('tiny'));
 
 require('./startup/createStaticFolders')();
-// require('./startup/db')();
+require('./startup/db')();
 require('./startup/socket.js').initSocket(server);
 require('./startup/routes')(app);
 require('./startup/joiObjectId')();
