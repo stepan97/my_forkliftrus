@@ -7,7 +7,9 @@ module.exports = function(){
         useFindAndModify: false
     };
     
-    mongoose.connect(config.get("dbConStr"), options)
+    console.log('DB STR:', config.get('dbConStr'));
+
+    mongoose.connect(config.get("dbConStr").toString(), options)
         .then(() => console.log("Connect to db..."))
         .catch((err) => console.log("Could not connect to db:", err));
 }
