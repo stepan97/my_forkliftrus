@@ -30,12 +30,13 @@ router.get('/:id', validateObjectId, async (req, res) => {
 
 router.post('/', [auth, adminAuth], async (req, res) => {
   const values = req.body;
+  values.image = DEFAULT_CATALOGUE_IMAGE;
   const { error } = validateCatalogue(values);
   if (error) return res.status(400).send(error.details[0].message);
 
   const catalogue = new Catalogue({
     title: values.title,
-    image: DEFAULT_CATALOGUE_IMAGE,
+    image: values.image,
     categories: [],
   });
 

@@ -6,8 +6,6 @@ module.exports = function(){
         useNewUrlParser: true,
         useFindAndModify: false
     };
-    
-    console.log('DB STR:', config.get('dbConStr'));
 
     mongoose.connect(config.get("dbConStr").toString(), options)
         .then(() => console.log("Connect to db..."))
