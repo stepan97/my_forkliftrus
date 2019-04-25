@@ -1,0 +1,4 @@
+{
+  "dbConStr" : "FLRConnectionString",
+  "jwtPrivateKey" : "FLRJwtPrivateKey"
+}

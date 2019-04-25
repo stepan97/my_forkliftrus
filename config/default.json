@@ -1,4 +1,4 @@
 {
-    "dbConStr" : "mongodb://127.0.0.1:27017/car-service",
-    "jwtPrivateKey" : "jwtPrivateKey"
+    "dbConStr" : "",
+    "jwtPrivateKey" : ""
 }
